@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory & Billing Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-warehouse"></i>
+            <h1><span>Inventory</span>Pro</h1>
+        </div>
+        <div class="header-actions">
+            <button id="exportBtn" class="btn btn-secondary">
+                <i class="fas fa-download"></i> Export
+            </button>
+            <button id="clearDataBtn" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Clear All
+            </button>
+        </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <section class="stats-section">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-boxes-stacked"></i></div>
+            <h3 id="totalProducts">0</h3>
+            <p>Total Products</p>
+        </div>
+        <div class="stat-card low-stock">
+            <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3 id="lowStock">0</h3>
+            <p>Low Stock</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+            <h3 id="totalSales">₹0</h3>
+            <p>Total Sales</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+            <h3 id="totalBills">0</h3>
+            <p>Total Bills</p>
+        </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+        <button class="nav-btn active" data-tab="dashboard">
+            <i class="fas fa-gauge-high"></i> Dashboard
+        </button>
+        <button class="nav-btn" data-tab="inventory">
+            <i class="fas fa-boxes-stacked"></i> Inventory
+        </button>
+        <button class="nav-btn" data-tab="billing">
+            <i class="fas fa-file-invoice-dollar"></i> Billing
+        </button>
+        <button class="nav-btn" data-tab="reports">
+            <i class="fas fa-chart-simple"></i> Reports
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Recent Sales</h3>
+                    <div id="recentSales" class="list-container"></div>
+                </div>
+                <div class="card">
+                    <h3>Low Stock Alert</h3>
+                    <div id="lowStockAlert" class="list-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory -->
+        <div id="inventory" class="tab-content">
+            <div class="card-header">
+                <h2>Products Inventory</h2>
+                <button id="addProductBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Product
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchProduct" placeholder="🔍 Search products...">
+                <select id="filterCategory">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="table-responsive">
+                <table id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Stock</th>
+                            <th>Price (₹)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Billing -->
+        <div id="billing" class="tab-content">
+            <div class="card-header">
+                <h2>Create New Bill</h2>
+            </div>
+            <div class="billing-form">
+                <div class="customer-details">
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="customerName" placeholder="Enter customer name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="customerPhone" placeholder="Phone number">
+                    </div>
+                </div>
+
+                <div class="add-items-section">
+                    <div class="item-row">
+                        <select id="productSelect">
+                            <option value="">Select Product</option>
+                        </select>
+                        <input type="number" id="itemQty" placeholder="Qty" min="1">
+                        <button id="addItemBtn" class="btn btn-primary">Add Item</button>
+                    </div>
+                </div>
+
+                <div id="billItems" class="bill-items"></div>
+
+                <div class="bill-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">₹0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>GST (10%):</span>
+                        <span id="gst">₹0</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <strong id="grandTotal">₹0</strong>
+                    </div>
+                </div>
+
+                <button id="saveBillBtn" class="btn btn-success btn-large">
+                    <i class="fas fa-save"></i> Save Bill & Print
+                </button>
+            </div>
+        </div>
+
+        <!-- Reports -->
+        <div id="reports" class="tab-content">
+            <div class="card-header">
+                <h2>Sales Reports</h2>
+                <div class="date-filter">
+                    <input type="date" id="fromDate">
+                    <input type="date" id="toDate">
+                    <button id="filterBtn" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+            <div id="reportsContent"></div>
+        </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Product</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="productForm">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="prodName" required>
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <input type="text" id="prodCategory" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock Quantity *</label>
+                    <input type="number" id="prodStock" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Price (₹) *</label>
+                    <input type="number" id="prodPrice" step="0.01" min="0" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
